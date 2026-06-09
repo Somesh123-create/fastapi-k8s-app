@@ -42,9 +42,7 @@ def get_password_hash(password: str) -> str:
     return str(pwd_context.hash(password))  # type: ignore[return-value]
 
 
-def create_access_token(
-    data: dict[str, Any], expires_delta: Optional[timedelta] = None
-) -> str:
+def create_access_token(data: dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
     """Create JWT access token.
 
     Args:
@@ -58,9 +56,7 @@ def create_access_token(
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(
-            minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-        )
+        expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt: str = jwt.encode(  # type: ignore[assignment]
         to_encode, SECRET_KEY, algorithm=ALGORITHM

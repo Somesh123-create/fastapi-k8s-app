@@ -83,9 +83,7 @@ class UserService:
         """
         return await self.repository.get_by_username(username)
 
-    async def get_all_users(
-        self, skip: int = 0, limit: int = 100
-    ) -> list[User]:
+    async def get_all_users(self, skip: int = 0, limit: int = 100) -> list[User]:
         """Get all users.
 
         Args:
@@ -126,9 +124,7 @@ class UserService:
         """
         return await self.repository.delete(user_id)
 
-    async def authenticate_user(
-        self, username: str, password: str
-    ) -> Optional[User]:
+    async def authenticate_user(self, username: str, password: str) -> Optional[User]:
         """Authenticate user.
 
         Args:

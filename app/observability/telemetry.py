@@ -90,9 +90,7 @@ def setup_opentelemetry(app: FastAPI) -> None:
     # Metrics setup
     if settings.enable_metrics:
         prometheus_reader = PrometheusMetricReader()
-        meter_provider = MeterProvider(
-            resource=resource, metric_readers=[prometheus_reader]
-        )
+        meter_provider = MeterProvider(resource=resource, metric_readers=[prometheus_reader])
         metrics.set_meter_provider(meter_provider)
 
     # Instrumentations

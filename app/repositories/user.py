@@ -56,11 +56,6 @@ class UserRepository(BaseRepository[User]):
         Returns:
             List of active users
         """
-        statement = (
-            select(User)
-            .where(User.is_active.is_(True))
-            .offset(skip)
-            .limit(limit)
-        )
+        statement = select(User).where(User.is_active.is_(True)).offset(skip).limit(limit)
         result = await self.session.execute(statement)
         return list(result.scalars().all())

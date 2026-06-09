@@ -27,9 +27,7 @@ async def get_user_service(session: AsyncSession = Depends(get_db)) -> UserServi
     return UserService(session)
 
 
-async def get_current_user(
-    token: str, session: AsyncSession
-) -> User:
+async def get_current_user(token: str, session: AsyncSession) -> User:
     """Get current user from token.
 
     Args:
