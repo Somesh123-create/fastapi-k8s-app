@@ -2,23 +2,27 @@ name: CI - Code Quality & Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
     name: Lint & Format
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -38,17 +42,17 @@ jobs:
         run: bandit -r app -ll
 
   type-check:
-    runs-on: ubuntu-latest
     name: Type Checking
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -59,8 +63,8 @@ jobs:
         run: mypy app
 
   test:
-    runs-on: ubuntu-latest
     name: Tests
+    runs-on: ubuntu-latest
 
     services:
       postgres:
@@ -68,92 +72,97 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: fastapi_db_test
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - 5432:5432
 
       redis:
         image: redis:7
+        ports:
+          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - 6379:6379
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Run unit tests
-        run: pytest tests/unit -v --cov=app --cov-report=xml
+      - name: Run Unit Tests
         env:
           DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi_db_test
           REDIS_URL: redis://localhost:6379/0
+        run: |
+          pytest tests/unit -v --cov=app --cov-report=xml
 
-      - name: Run integration tests
-        run: pytest tests/integration -v --cov=app --cov-report=xml --cov-append
+      - name: Run Integration Tests
         env:
           DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi_db_test
           REDIS_URL: redis://localhost:6379/0
+        run: |
+          pytest tests/integration -v --cov=app --cov-report=xml --cov-append
 
-      - name: Run API tests
-        run: pytest tests/api -v --cov=app --cov-report=xml --cov-append
+      - name: Run API Tests
         env:
           DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi_db_test
           REDIS_URL: redis://localhost:6379/0
+        run: |
+          pytest tests/api -v --cov=app --cov-report=xml --cov-append
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v5
         with:
           files: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
 
   security:
-    runs-on: ubuntu-latest
     name: Security Scanning
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Run security checks
+      - name: Run Bandit
         run: |
           bandit -r app -ll
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
 
-      - name: Upload Trivy results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Run Trivy Filesystem Scan
+        uses: aquasecurity/trivy-action@0.28.0
         with:
-          sarif_file: 'trivy-results.sarif'
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-results.sarif
+
+      - name: Upload Trivy Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
