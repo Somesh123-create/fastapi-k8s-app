@@ -1,0 +1,38 @@
+# QA environment values
+replicaCount: 3
+
+image:
+  tag: "latest"
+
+environment: qa
+debug: "false"
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 15
+  targetCPUUtilizationPercentage: 70
+
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: api-qa.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: fastapi-tls-qa
+      hosts:
+        - api-qa.example.com
+
+podDisruptionBudget:
+  minAvailable: 2

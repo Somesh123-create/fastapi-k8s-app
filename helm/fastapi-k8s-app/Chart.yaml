@@ -1,0 +1,13 @@
+apiVersion: v2
+name: fastapi-k8s-app
+description: A Helm chart for production-ready FastAPI Kubernetes microservice
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - fastapi
+  - kubernetes
+  - microservices
+maintainers:
+  - name: Platform Team
+    email: platform@company.com
