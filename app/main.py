@@ -10,7 +10,11 @@ from app.api.v1 import router as api_router
 from app.core.config import settings
 from app.core.database import close_db, init_db
 from app.core.logging_config import setup_logging
-from app.observability import CorrelationIdMiddleware, MetricsMiddleware
+from app.observability import (
+    CorrelationIdMiddleware,
+    MetricsMiddleware,
+    setup_opentelemetry,
+)
 
 # Setup logging
 setup_logging()
@@ -47,6 +51,9 @@ def create_app() -> FastAPI:
     # Add custom middleware
     app.add_middleware(CorrelationIdMiddleware)
     app.add_middleware(MetricsMiddleware)
+
+    # Setup OpenTelemetry
+    setup_opentelemetry(app)
 
     # Include routers
     app.include_router(api_router)
