@@ -3,6 +3,7 @@
 import json
 import logging
 import sys
+from datetime import datetime
 from logging.config import dictConfig
 from typing import Any
 
@@ -35,8 +36,6 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
 
 def setup_logging() -> None:
     """Configure logging for the application."""
-    from datetime import datetime
-
     if not settings.enable_logging:
         return
 

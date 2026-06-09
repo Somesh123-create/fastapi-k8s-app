@@ -95,7 +95,8 @@ class UserService:
         Returns:
             List of users
         """
-        return await self.repository.get_all(skip=skip, limit=limit)
+        result = await self.repository.get_all(skip=skip, limit=limit)
+        return list(result)
 
     async def update_user(self, user_id: str, user_in: UserUpdate) -> Optional[User]:
         """Update user.
@@ -141,7 +142,7 @@ class UserService:
         if not user:
             return None
 
-        if not verify_password(password, user.hashed_password):
+        if not verify_password(password, str(user.hashed_password)):
             return None
 
         if not user.is_active:

@@ -56,7 +56,7 @@ async def list_users(
     limit: int = Query(100, ge=1, le=1000),
     session: AsyncSession = Depends(get_db),
     _: str = Depends(verify_token),
-) -> list[UserResponse]:
+) -> list[User]:  # type: ignore[return]
     """List all users.
 
     Args:

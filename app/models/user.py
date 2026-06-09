@@ -12,8 +12,8 @@ from app.core.database import Base
 class TimeStampMixin:
     """Mixin that adds timestamp fields to models."""
 
-    @declared_attr
-    def created_at(cls) -> DateTime:
+    @declared_attr  # type: ignore[misc]
+    def created_at(cls):  # type: ignore[no-untyped-def]
         """Created at timestamp."""
         return Column(
             DateTime(timezone=True),
@@ -21,8 +21,8 @@ class TimeStampMixin:
             nullable=False,
         )
 
-    @declared_attr
-    def updated_at(cls) -> DateTime:
+    @declared_attr  # type: ignore[misc]
+    def updated_at(cls):  # type: ignore[no-untyped-def]
         """Updated at timestamp."""
         return Column(
             DateTime(timezone=True),

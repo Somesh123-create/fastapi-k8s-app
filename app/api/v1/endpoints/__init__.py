@@ -1,3 +1,3 @@
 """API v1 endpoints initialization."""
 
-__all__ = []
+__all__: list[str] = []

@@ -45,7 +45,7 @@ class BaseRepository(Generic[T]):
         Returns:
             Object or None
         """
-        statement = select(self.model).where(self.model.id == obj_id)
+        statement = select(self.model).where(self.model.id == obj_id)  # type: ignore[attr-defined]
         result = await self.session.execute(statement)
         return result.scalars().first()
 

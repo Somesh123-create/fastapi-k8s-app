@@ -48,4 +48,4 @@ async def verify_token(authorization: Optional[str] = Header(None)) -> str:
             detail="Invalid token",
         )
 
-    return user_id
+    return str(user_id)

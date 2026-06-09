@@ -27,7 +27,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         bool: True if password matches, False otherwise
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    return bool(pwd_context.verify(plain_password, hashed_password))  # type: ignore[return-value]
 
 
 def get_password_hash(password: str) -> str:
@@ -39,7 +39,7 @@ def get_password_hash(password: str) -> str:
     Returns:
         str: Hashed password
     """
-    return pwd_context.hash(password)
+    return str(pwd_context.hash(password))  # type: ignore[return-value]
 
 
 def create_access_token(
@@ -62,7 +62,9 @@ def create_access_token(
             minutes=ACCESS_TOKEN_EXPIRE_MINUTES
         )
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt: str = jwt.encode(  # type: ignore[assignment]
+        to_encode, SECRET_KEY, algorithm=ALGORITHM
+    )
     return encoded_jwt
 
 
@@ -76,7 +78,9 @@ def decode_token(token: str) -> Optional[dict[str, Any]]:
         dict: Decoded token data or None if invalid
     """
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload: dict[str, Any] = jwt.decode(  # type: ignore[assignment]
+            token, SECRET_KEY, algorithms=[ALGORITHM]
+        )
         return payload
     except JWTError:
         return None

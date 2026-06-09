@@ -1,5 +1,8 @@
 """Dependency injection for FastAPI."""
 
+from typing import Optional
+
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -9,7 +12,7 @@ from app.repositories.user import UserRepository
 from app.services.user import UserService
 
 
-async def get_user_service(session: AsyncSession = None) -> UserService:
+async def get_user_service(session: AsyncSession = Depends(get_db)) -> UserService:
     """Get user service.
 
     Args:

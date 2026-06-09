@@ -63,4 +63,4 @@ class UserRepository(BaseRepository[User]):
             .limit(limit)
         )
         result = await self.session.execute(statement)
-        return result.scalars().all()
+        return list(result.scalars().all())

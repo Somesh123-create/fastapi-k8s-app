@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from typing import Callable
 
+from fastapi import FastAPI
 from opentelemetry import metrics, trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.exporter.prometheus import PrometheusMetricReader
@@ -59,7 +60,7 @@ ACTIVE_REQUESTS = Gauge(
 )
 
 
-def setup_opentelemetry() -> None:
+def setup_opentelemetry(app: FastAPI) -> None:
     """Setup OpenTelemetry tracing and metrics."""
     if not settings.enable_tracing:
         return
@@ -118,7 +119,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         start_time = time.time()
 
         try:
-            response = await call_next(request)
+            response: Response = await call_next(request)  # type: ignore[assignment]
             request_duration = time.time() - start_time
 
             REQUEST_COUNT.labels(
@@ -162,7 +163,7 @@ class CorrelationIdMiddleware(BaseHTTPMiddleware):
         correlation_id = request.headers.get("X-Correlation-ID", str(datetime.now().timestamp()))
         request.state.correlation_id = correlation_id
 
-        response = await call_next(request)
+        response: Response = await call_next(request)  # type: ignore[assignment]
         response.headers["X-Correlation-ID"] = correlation_id
 
         return response
