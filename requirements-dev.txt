@@ -12,4 +12,3 @@ types-redis==4.6.0.5
 types-pytz==2024.1.0.20240417
 pre-commit==3.6.0
 bandit==1.7.5
-safety==2.3.5
